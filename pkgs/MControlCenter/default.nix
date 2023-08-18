@@ -6,6 +6,7 @@
   qtbase,
   wrapQtAppsHook,
   qttools,
+  dbus,
 }:
 stdenv.mkDerivation rec {
   pname = "mcontrolcenter";
@@ -19,6 +20,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
+    dbus
     qtbase
     qttools
   ];
@@ -28,10 +30,14 @@ stdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-    install -Dm644 $src/src/helper/mcontrolcenter-helper.conf $out/share/system.d/mcontrolcenter-helper.conf
-    install -Dm644 $src/src/helper/mcontrolcenter.helper.service $out/share/system-services/mcontrolcenter.helper.service
-
-    sed -i -e 's,/usr/libexec/mcontrolcenter-helper,mcontrolcenter-helper,g' $out/share/system-services/mcontrolcenter.helper.service
+    install -Dm644 $src/src/helper/mcontrolcenter-helper.conf $out/share/dbus-1/system.d/mcontrolcenter-helper.conf
+    mkdir -p $out/share/dbus-1/system-services
+    cat <<END > $out/share/dbus-1/system-services/mcontrolcenter.helper.service
+    [D-BUS Service]
+    Name=mcontrolcenter.helper
+    Exec=$out/bin/mcontrolcenter-helper
+    User=root
+    END
 
     install -Dm644 $src/resources/mcontrolcenter.svg $out/share/icons/hicolor/scalable/apps/mcontrolcenter.svg
     install -Dm644 $src/resources/mcontrolcenter.desktop $out/share/applications/mcontrolcenter.desktop
