@@ -42,6 +42,5 @@ stdenv.mkDerivation rec {
     description = "An application that allows you to change the settings of MSI laptops running Linux";
     homepage = "https://github.com/dmitry-s93/MControlCenter";
     license = licenses.gpl3;
-    maintainers = with maintainers; [weirdrock];
   };
 }
